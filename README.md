@@ -1,23 +1,65 @@
 # UV MEGA - Make Environments Great Again
 
-PyConf Hyderabad. 22 Feb 2025.
-Source: https://github.com/sanand0/uv-mega
+- PyConf Hyderabad. 22 Feb 2025.
+- S Anand, LLM psychologist at Straive
+- Email: s.anand@gramener.com
 
-- In 2024, I abandoned Python for JavaScript.
+Slides: https://github.com/sanand0/uv-mega
+
+## We'll talk about uv
+
+- In 2024, I almost abandoned Python for JavaScript.
 - Deno, WASM, and TypeScript are brilliant!
-- `uv` reversed that.
-- Why is `uv` such a game-changer for Python?
-- Let's explore practical examples.
+- But `uv` reversed that.
+- `uv` is another way to run Python.
+- It's the **ONLY** way I run Python now.
 
-## uv combines python, pip, venv, pipx, pyenv
+## It's a single non-admin binary
 
-| Before                        | After                        |
-| ----------------------------- | ---------------------------- |
-| python hello.py               | uv run hello.py              |
-| venv --python 3.12            | uv venv --python 3.12        |
-| pip install pandas            | uv pip install pandas        |
-| pipx run ruff format hello.py | uv tool ruff format hello.py |
-| pyenv install 3.12            | uv python install 3.12       |
+- It's a **single binary** executable file.
+- Download from https://github.com/astral-sh/uv
+- Add `uv` to your PATH and use it.
+- No admin rights required.
+
+## uv combines python, pip, venv, pyenv
+
+| Before             | After                  |
+| ------------------ | ---------------------- |
+| python hello.py    | uv run hello.py        |
+| venv --python 3.12 | uv venv --python 3.12  |
+| pip install pandas | uv pip install pandas  |
+| pyenv install 3.12 | uv python install 3.12 |
+
+## It is FAST!
+
+- Written in **Rust**.
+- **FAST** dependency resolver algorithm.
+- 8-10× faster than `pip` on cold runs. (MUCH faster than `conda`.)
+- 80-115× faster when cached.
+- Completes in **milliseconds**, not seconds.
+
+```bash
+# Watch the speed
+uv run --with pandas,ipython ipython
+```
+
+## It takes less space
+
+- **Re-use packages** across venvs using hard-links.
+- **No extra copies** of pip or setuptools in each venv.
+- Creating 1000 venvs? No problem.
+
+## It's popular
+
+- **40,000 stars** on GitHub
+- https://github.com/astral-sh/uv
+
+## No conflicts with other Pythons
+
+- `uv` is standalone and independent.
+- Runs alongside system Python.
+- Runs alongside Conda, Mamba, etc.
+- If other Python versions change, `uv` is unaffected.
 
 ## It's backward and forward compatible
 
@@ -27,71 +69,38 @@ Source: https://github.com/sanand0/uv-mega
 
 There's nothing new to learn. Switch back any time.
 
-## It's 100% standards compliant
+## It's standards compliant
 
+- PEP 723 compatible for inline script dependencies
 - PEP 440 compatible for versions
 - PEP 508 compatible for dependencies
 - PEP 517/518 compatible for builds
-- PEP 723 compatible for inline script dependencies
 - ... etc.
 
-## It is FAST!
-
-- Written in **Rust**
-- **FAST** dependency resolver algorithm
-- 8-10× faster than pip on cold runs
-- 80-115× faster when cached
-- Incomparably faster than conda 🤣
-- Completes in **milliseconds**, not seconds
-
-```bash
-# Watch the speed
-uv run --with pandas,ipython ipython
-```
-
-## It takes less space
-
-- **Re-use packages** across venvs (hard-links)
-- **No extra copies** of pip or setuptools in each venv
-- Creating 1000 venvs? No problem.
-
-## No admin rights required
-
-- It's a **single binary**
-- Download from https://github.com/astral-sh/uv
-- Add `uv` to your PATH and use it
-
-## No conflicts with other Pythons
-
-- `uv` is standalone and independent
-- Runs alongside system Python
-- Runs alongside Conda, Mamba, etc
-- No impact on `uv` if other Python versions change
-
-## It's popular
-
-- **40,000 stars** on GitHub
-- https://github.com/astral-sh/uv
+It's tested on the top 10,000 PyPi packages.
 
 ## In short, there's no harm using it
 
+- It's a single non-admin binary
 - It is FAST!
 - It takes less space
-- No admin access required
+- It's popular
 - No conflicts with other Pythons
-- It's 100% standards compliant
 - It's backward and forward compatible
+- It's standards compliant
 
-# Try new things without installation
+# Try new things
 
-- Explore libraries without installation
-- Try different Pythons without installation
-- Test library version changes without installation
-- Run tools without installation
+With `uv`, no installation is required.
+
+- Explore libraries without installation.
+- Try different Pythons without installation.
+- Test library version changes without installation.
+- Run tools without installation.
 
 ## Explore libraries without installation
 
-Skip creating a venv with ipython, pandas, etc.
+No need to create a venv. Run ipython with pandas directly.
 
 ```bash
 uv run --with pandas,requests,ipython ipython
@@ -101,7 +110,8 @@ Try trending libraries and extras features.
 https://github.com/trending/python?since=monthly
 
 ```bash
-uv run --with dlt[duckdb],ipython ipython
+uv run --with 'dlt[duckdb],ipython' ipython
+uv run --python 3.11 --with 'great_expectations,ipython,numpy<2,pandas<2' ipython
 ```
 
 https://pypi.org/project/dlt
@@ -127,7 +137,7 @@ E.g. Pandas 1.x parses dates differently than 2.x.
 ```bash
 uv run --python 3.9 --with 'pandas<2,numpy<2' python -c "
 import pandas as pd;
-print(pd.Series(['13-01-2000', '01-12-2000']))"
+print(pd.to_datetime(['13-01-2000', '12-01-2000']))"
 ```
 
 ## Run tools without installation
@@ -135,7 +145,7 @@ print(pd.Series(['13-01-2000', '01-12-2000']))"
 `uv tool` or `uvx` runs CLI tools in isolated environments.
 
 ```bash
-uvx yt-dlp https://www.youtube.com/watch?v=v3W2cjTWY-Y
+uvx yt-dlp 'https://www.youtube.com/watch?v=v3W2cjTWY-Y'
 uvx black --check .
 uvx ruff format .
 uvx pytest
@@ -144,7 +154,7 @@ uvx files-to-prompt *.py | uvx llm --system "Write a README.md"
 uvx jupyter lab
 uvx markitdown *.pdf
 uvx --with datasette-cluster-map datasette *.db
-uvx --from httpie http httpbin.org
+uvx --from httpie http httpbin.org/get
 ```
 
 Explore many others: `awscli`, `cog`, `copier`, `mycli`, `mypy`, `pgcli`, etc.
@@ -174,8 +184,10 @@ uv add markdown2 rich --script script.py
 # ///
 ```
 
-- `uv run script.py` creates a venv, installs dependencies, runs script. Like `npx`.
+- `uv run script.py` creates venv, installs deps, runs. Like `npx`.
 - `#!uv run` shebang converts it into an executable.
+
+E.g. [`./slide.py README.md`](slide.py) runs this Markdown file as slides.
 
 ## Run scripts from a URL
 
@@ -230,7 +242,7 @@ Or save from `llm` to a single-file script, `uv add` dependencies, and `uv run`.
 
 ## Run tools with outdated dependencies
 
-If you have code that worked pre-2020 but libraries have changed, use:
+If your code worked pre-2020 but libraries have changed, use:
 
 ```bash
 uv run --exclude-newer 2020-01-01 script.py
@@ -239,7 +251,7 @@ uv run --exclude-newer 2020-01-01 script.py
 Or, provide specific versions as dependencies:
 
 ```bash
-uv run --python 3.9 --with 'pandas<2,numpy<2' script.py
+uv run --python 3.9 --with 'sqlalchemy==1.4.45' script.py
 ```
 
 No need to preserve / re-create the old environment.
@@ -251,15 +263,15 @@ https://simonwillison.net/2025/Jan/31/black-newline-docstring/
 
 ```bash
 echo 'class ModelError(Exception):
-    "Models can raise this error, which will be displayed to the user"
+    "Models can raise this error"
     pass' | uvx black@24.10.0 -
 
 echo 'class ModelError(Exception):
-    "Models can raise this error, which will be displayed to the user"
+    "Models can raise this error"
     pass' | uvx black@25.1.0 -
 ```
 
-For clean environments, e.g. measuring cold start times, use `--isolated`:
+Use `--isolated` for clean environments, e.g. measure load times.
 
 ```bash
 uv run --no-cache --isolated --with pandas==2.2.3 python -c "
@@ -272,22 +284,26 @@ If you're behind a corporate firewall, on an air-gapped machine, or a flight,
 use `--offline` to use cached dependencies you've already downloaded.
 
 ```bash
-uv run --offline script.py
+uv run --offline --with pandas script.py
+uv pip install --offline pandas
 ```
+
+These work even if you're offline, as long as `pandas` is cached.
 
 ## Lock and sync environments
 
-`uv.lock` is like a `package-lock.json` or like a `requirements.txt`
+`uv.lock` lists all dependencies and their versions.
+It's like `package-lock.json` or `requirements.txt`
 -- but **cross-platform** and **reproducible**.
 
 - `uv lock` creates a `uv.lock`.
 - `uv sync` syncs your venv to match `uv.lock`.
 
-Use it to create a **reproducible** environment.
+Helps **reproduce** the environment in another machine.
 
 ## Use in CI/CD pipelines
 
-Run linters, test cases, etc. in ephemeral environments.
+Run linters and test cases using `uv`.
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -297,7 +313,7 @@ uv run --python 3.12 --with '.[test]' pytest
 uv run --python 3.13 --with '.[test]' pytest
 ```
 
-Run in GitHub Actions.
+## Use it in GitHub Actions
 
 ```yaml
 steps:
@@ -328,9 +344,6 @@ RUN --mount=type=cache,target=/root/.cache/uv uv sync
 ```
 
 - "uv is **so fast**, subsequent installs of common libraries will be instant if you happen to have the same version"
-- Strategy: Install `uv sync` in one stage. Copy .venv into a slim runtime image without pip/uv at runtime
-
-- https://mkennedy.codes/posts/python-docker-images-using-uv-s-new-python-features/
 - https://docs.astral.sh/uv/guides/integration/docker/
 
 ## ... and much, much more
@@ -343,20 +356,21 @@ RUN --mount=type=cache,target=/root/.cache/uv uv sync
 
 Explore these commands too:
 
-- `uv add` is like `npm install`. It lets you manage your `project.toml`
-- `uv build` lets you create a `.whl` for distribution
-- `uv init` seeds a `.venv` and a `project.toml`. Has several options to explore
-- `uv tool install -e .` installs local tools as executsbles
+- `uv add` is like `npm install`. Manages your `project.toml`.
+- `uv build` lets you create a `.whl` for distribution.
+- `uv init` seeds a `.venv` and a `project.toml`. Has many options.
+- `uv tool install -e .` installs local tools as executables
 - `uv workspace` manages multiple projects in a single repo
 
 # What you should do now
 
-- Use `uv` instead of Python for development, and in pipelines / Dockerfiles.
-- Use `uv` instead of pip, venv, or pipx.
+- Use `uv` instead of `python` for dev and CI/CD.
+- Use `uv` instead of `pip`, `venv`, or `pyenv`.
 - Use `uvx` to directly run CLI tools.
 - Use inline dependencies to create single-file scripts.
 - Use `uv.lock` instead of `requirements.txt`.
 
 `uv` has many more features. Explore at https://docs.astral.sh/uv/
 
-Source: https://github.com/sanand0/uv-mega
+- Slides: https://github.com/sanand0/uv-mega
+- Email: s.anand@gramener.com

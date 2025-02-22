@@ -1,3 +1,7 @@
+# I might create a few sample files during demos.
+script.py
+hello.py
+
 # slide_state.json is created by slide.py
 slide_state.json
 
@@ -9,3 +13,6 @@ slide_state.json
 
 # Skip SQLite DBs for datasette demo.
 *.db
+
+# Skip .csv files for LLM demo.
+*.csv
